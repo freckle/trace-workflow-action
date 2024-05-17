@@ -1,0 +1,4 @@
+!.env.example
+!.env.test
+.env*
+.stack-work
