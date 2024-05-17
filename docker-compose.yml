@@ -1,0 +1,15 @@
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.97.0
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    volumes:
+      - ./otel-config.yaml:/config.yaml:ro
+      - ./file-exporter:/file-exporter:rwz
+    environment:
+      DD_API_KEY: $DD_API_KEY
+      OTLP_ENV: gha
+      OTLP_SERVICE: $GITHUB_OWNER/$GITHUB_REPO
+      OTLP_VERSION: $GITHUB_COMMIT_SHA
+    command: ["--config", "/config.yaml"]

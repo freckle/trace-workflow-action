@@ -1,0 +1,5 @@
+!.env.example
+!.env.test
+.env*
+.stack-work
+file-exporter
