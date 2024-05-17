@@ -9,6 +9,6 @@ services:
     environment:
       DD_API_KEY: $DD_API_KEY
       OTLP_ENV: gha
-      OTLP_SERVICE: $GITHUB_REPOSITORY
+      OTLP_SERVICE: $GITHUB_OWNER/$GITHUB_REPO
       OTLP_VERSION: $GITHUB_COMMIT_SHA
     command: ["--config", "/config.yaml"]

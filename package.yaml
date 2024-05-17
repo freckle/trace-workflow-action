@@ -35,13 +35,16 @@ dependencies:
 library:
   source-dirs: src
   dependencies:
+    - aeson
+    - clock
     - dotenv
+    - extra
+    - hs-opentelemetry-api
     - hs-opentelemetry-sdk
+    - http-conduit
+    - http-types
+    - time
     - unliftio
-    # - bytestring
-    # - github
-    # - unliftio
-    # - vector
 
 executables:
   trace-workflow:

@@ -5,6 +5,13 @@
 
 packages:
 - completed:
+    hackage: github-0.29@sha256:1a6f082a24df02e38a2de548ce72654537b3aee5383cb57dce5d3ef6386c6752,7939
+    pantry-tree:
+      sha256: 84286a49354095da536c1ab267f77976c1bc69c6e55f43070f4c588ea461fe86
+      size: 10172
+  original:
+    hackage: github-0.29
+- completed:
     hackage: hs-opentelemetry-api-0.1.0.0@sha256:8af01d0c81dd1af6d3293b105178fd9bfa0057c9eb88ac24d3c440bff660abe3,3705
     pantry-tree:
       sha256: 7c332e7241636097fe199bd87f57db333830bed416296e7ebf944497557f46be

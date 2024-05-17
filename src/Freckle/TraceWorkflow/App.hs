@@ -5,42 +5,45 @@ module Freckle.TraceWorkflow.App
 import Relude
 
 import Configuration.Dotenv qualified as Dotenv
-import Data.Text (pack, unpack)
-import OpenTelemetry.Trace
-import System.Environment (getEnv)
-import UnliftIO (MonadUnliftIO)
-import UnliftIO.Exception (bracket)
-import Prelude qualified as Unsafe (read)
-
-data WorkflowEnv = WorkflowEnv
-  { githubCommitSha :: Text
-  , githubRepository :: Text
-  , githubRunId :: Integer
-  , githubToken :: Text
-  }
-
-getWorkflowEnv :: IO WorkflowEnv
-getWorkflowEnv =
-  WorkflowEnv
-    <$> (pack <$> getEnv "GITHUB_COMMIT_SHA")
-    <*> (pack <$> getEnv "GITHUB_REPOSITORY")
-    <*> (Unsafe.read <$> getEnv "GITHUB_RUN_ID")
-    <*> (pack <$> getEnv "GITHUB_TOKEN")
+import Data.List.NonEmpty qualified as NE
+import Data.List.NonEmpty.Extra qualified as NE
+import Freckle.TraceWorkflow.GitHub (Job (..), Run (..), Step (..), wasSkipped)
+import Freckle.TraceWorkflow.GitHub qualified as GitHub
+import Freckle.TraceWorkflow.OpenTelemetry
+import Freckle.TraceWorkflow.WorkflowEnv
 
 main :: IO ()
 main = do
   Dotenv.loadFile Dotenv.defaultConfig
   env <- getWorkflowEnv
 
-  withTracerProvider $ \tracerProvider -> do
+  mJobs <-
+    NE.nonEmpty
+      . filter (not . wasSkipped)
+      <$> GitHub.getJobs
+        env.githubToken
+        env.githubOwner
+        env.githubRepo
+        env.githubRunId
+
+  for_ mJobs $ \jobs -> do
+    run <-
+      GitHub.getRun
+        env.githubToken
+        env.githubOwner
+        env.githubRepo
+        env.githubRunId
+
     let
-      tracerName = fromString $ "gha-" <> unpack env.githubRepository
-      tracer = makeTracer tracerProvider tracerName tracerOptions
+      runSpanName = run.name -- TODO: attempt
+      runSpanEnd = NE.maximum1 $ (.completed_at) <$> jobs
 
-    putStrLn "Hello world"
-
-withTracerProvider :: MonadUnliftIO m => (TracerProvider -> m a) -> m a
-withTracerProvider =
-  bracket
-    (liftIO initializeGlobalTracerProvider)
-    (liftIO . shutdownTracerProvider)
+    withTracer $ \tracer -> do
+      inSpan tracer runSpanName run.run_started_at Nothing $ do
+        for_ jobs $ \job -> do
+          inSpan tracer job.name job.started_at Nothing $ do
+            for_ (filter (not . wasSkipped) job.steps) $ \step -> do
+              inSpan tracer step.name step.started_at Nothing $ do
+                pure step.completed_at
+            pure job.completed_at
+        pure runSpanEnd
