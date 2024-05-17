@@ -1,0 +1,77 @@
+name: trace-workflow
+version: 0.0.0.0
+
+default-extensions:
+  - DeriveAnyClass
+  - DeriveGeneric
+  - DerivingStrategies
+  - DuplicateRecordFields
+  - FlexibleContexts
+  - GeneralizedNewtypeDeriving
+  - ImportQualifiedPost
+  - LambdaCase
+  - NoFieldSelectors
+  - NoImplicitPrelude
+  - OverloadedRecordDot
+  - OverloadedStrings
+  - TypeApplications
+
+ghc-options:
+  - -fwrite-ide-info
+  - -Weverything
+  - -Wno-all-missed-specialisations
+  - -Wno-missing-import-lists
+  - -Wno-missing-kind-signatures
+  - -Wno-missing-local-signatures
+  - -Wno-missing-safe-haskell-mode
+  - -Wno-prepositive-qualified-module
+  - -Wno-unsafe
+  - -optP-Wno-nonportable-include-path # workaround [Filename case on macOS · Issue #4739 · haskell/cabal](https://github.com/haskell/cabal/issues/4739)
+
+dependencies:
+  - base
+  - relude
+
+library:
+  source-dirs: src
+  dependencies:
+    - dotenv
+    - hs-opentelemetry-sdk
+    - unliftio
+    # - bytestring
+    # - github
+    # - unliftio
+    # - vector
+
+executables:
+  trace-workflow:
+    source-dirs: app
+    main: Main.hs
+    dependencies:
+      - trace-workflow
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+
+# tests:
+#   doctest:
+#     main: Main.hs
+#     source-dirs: doctest
+#     dependencies:
+#       - aeson
+#       - doctest
+#       - yaml
+
+#   hspec:
+#     main: Spec.hs
+#     source-dirs: test
+#     dependencies:
+#       - Blammo
+#       - aeson
+#       - bytestring
+#       - containers
+#       - file-embed
+#       - hspec
+#       - stack-lint-extra-deps
+#       - text

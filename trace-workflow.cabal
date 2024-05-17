@@ -1,0 +1,66 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.36.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           trace-workflow
+version:        0.0.0.0
+build-type:     Simple
+
+library
+  exposed-modules:
+      Freckle.TraceWorkflow.App
+  other-modules:
+      Paths_trace_workflow
+  hs-source-dirs:
+      src
+  default-extensions:
+      DeriveAnyClass
+      DeriveGeneric
+      DerivingStrategies
+      DuplicateRecordFields
+      FlexibleContexts
+      GeneralizedNewtypeDeriving
+      ImportQualifiedPost
+      LambdaCase
+      NoFieldSelectors
+      NoImplicitPrelude
+      OverloadedRecordDot
+      OverloadedStrings
+      TypeApplications
+  ghc-options: -fwrite-ide-info -Weverything -Wno-all-missed-specialisations -Wno-missing-import-lists -Wno-missing-kind-signatures -Wno-missing-local-signatures -Wno-missing-safe-haskell-mode -Wno-prepositive-qualified-module -Wno-unsafe -optP-Wno-nonportable-include-path
+  build-depends:
+      base
+    , dotenv
+    , hs-opentelemetry-sdk
+    , relude
+    , unliftio
+  default-language: Haskell2010
+
+executable trace-workflow
+  main-is: Main.hs
+  other-modules:
+      Paths_trace_workflow
+  hs-source-dirs:
+      app
+  default-extensions:
+      DeriveAnyClass
+      DeriveGeneric
+      DerivingStrategies
+      DuplicateRecordFields
+      FlexibleContexts
+      GeneralizedNewtypeDeriving
+      ImportQualifiedPost
+      LambdaCase
+      NoFieldSelectors
+      NoImplicitPrelude
+      OverloadedRecordDot
+      OverloadedStrings
+      TypeApplications
+  ghc-options: -fwrite-ide-info -Weverything -Wno-all-missed-specialisations -Wno-missing-import-lists -Wno-missing-kind-signatures -Wno-missing-local-signatures -Wno-missing-safe-haskell-mode -Wno-prepositive-qualified-module -Wno-unsafe -optP-Wno-nonportable-include-path -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base
+    , relude
+    , trace-workflow
+  default-language: Haskell2010
