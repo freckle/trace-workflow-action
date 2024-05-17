@@ -35,13 +35,15 @@ exporters:
       site: datadoghq.com
       key: $DD_API_KEY
 
-  logging:
+  debug:
     verbosity: detailed
+    sampling_initial: 5
+    sampling_thereafter: 200
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
       processors: [attributes/tags,batch]
-      exporters: [datadog, logging]
+      exporters: [datadog, debug]
   extensions: [health_check]
