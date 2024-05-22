@@ -56,7 +56,6 @@ executables:
       - -threaded
       - -rtsopts
       - -with-rtsopts=-N
-
 # tests:
 #   doctest:
 #     main: Main.hs
