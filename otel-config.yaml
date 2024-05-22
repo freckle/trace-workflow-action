@@ -40,10 +40,14 @@ exporters:
     sampling_initial: 5
     sampling_thereafter: 200
 
+  file:
+    path: /file-exporter/trace.json
+    format: json
+
 service:
   pipelines:
     traces:
       receivers: [otlp]
       processors: [attributes/tags,batch]
-      exporters: [datadog, debug]
+      exporters: [datadog, debug, file]
   extensions: [health_check]
