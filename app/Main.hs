@@ -2,9 +2,9 @@ module Main
   ( main
   ) where
 
-import Relude
+import           Relude
 
-import Freckle.TraceWorkflow.App qualified as App
+import qualified Freckle.TraceWorkflow.App as App
 
 main :: IO ()
 main = App.main

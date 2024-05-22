@@ -3,18 +3,18 @@ module Freckle.TraceWorkflow.WorkflowEnv
   , getWorkflowEnv
   ) where
 
-import Relude
+import           Relude
 
-import Data.Text (pack)
-import System.Environment (getEnv)
-import Prelude qualified as Unsafe (read)
+import           Data.Text          (pack)
+import qualified Prelude            as Unsafe (read)
+import           System.Environment (getEnv)
 
 data WorkflowEnv = WorkflowEnv
   { githubCommitSha :: Text
-  , githubOwner :: Text
-  , githubRepo :: Text
-  , githubRunId :: Int
-  , githubToken :: Text
+  , githubOwner     :: Text
+  , githubRepo      :: Text
+  , githubRunId     :: Int
+  , githubToken     :: Text
   }
 
 getWorkflowEnv :: IO WorkflowEnv

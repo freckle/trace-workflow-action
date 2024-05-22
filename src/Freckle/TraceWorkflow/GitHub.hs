@@ -9,19 +9,19 @@ module Freckle.TraceWorkflow.GitHub
   , wasSkipped
   ) where
 
-import Relude
+import           Relude
 
-import Data.Aeson
-import Data.Text (unpack)
-import Data.Time (UTCTime)
-import Network.HTTP.Simple
-import Network.HTTP.Types.Header (hAuthorization, hUserAgent)
+import           Data.Aeson
+import           Data.Text                 (unpack)
+import           Data.Time                 (UTCTime)
+import           Network.HTTP.Simple
+import           Network.HTTP.Types.Header (hAuthorization, hUserAgent)
 
 data Run = Run
-  { name :: Text
-  , status :: Text
-  , conclusion :: Maybe Text
-  , run_attempt :: Int
+  { name           :: Text
+  , status         :: Text
+  , conclusion     :: Maybe Text
+  , run_attempt    :: Int
   , run_started_at :: UTCTime
   }
   deriving stock (Generic)
@@ -38,21 +38,21 @@ getRun token owner repo runId = do
     <> show runId
 
 data Job = Job
-  { name :: Text
-  , status :: Text
-  , conclusion :: Maybe Text
-  , started_at :: UTCTime
+  { name         :: Text
+  , status       :: Text
+  , conclusion   :: Maybe Text
+  , started_at   :: UTCTime
   , completed_at :: UTCTime
-  , steps :: [Step]
+  , steps        :: [Step]
   }
   deriving stock (Generic)
   deriving anyclass (FromJSON)
 
 data Step = Step
-  { name :: Text
-  , status :: Text
-  , conclusion :: Maybe Text
-  , started_at :: UTCTime
+  { name         :: Text
+  , status       :: Text
+  , conclusion   :: Maybe Text
+  , started_at   :: UTCTime
   , completed_at :: UTCTime
   }
   deriving stock (Generic)
@@ -60,7 +60,7 @@ data Step = Step
 
 data JobsPage = JobsPage
   { total_count :: Int
-  , jobs :: [Job]
+  , jobs        :: [Job]
   }
   deriving stock (Generic)
   deriving anyclass (FromJSON)

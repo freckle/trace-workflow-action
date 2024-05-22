@@ -2,15 +2,16 @@ module Freckle.TraceWorkflow.App
   ( main
   ) where
 
-import Relude
+import           Relude
 
-import Configuration.Dotenv qualified as Dotenv
-import Data.List.NonEmpty qualified as NE
-import Data.List.NonEmpty.Extra qualified as NE
-import Freckle.TraceWorkflow.GitHub (Job (..), Run (..), Step (..), wasSkipped)
-import Freckle.TraceWorkflow.GitHub qualified as GitHub
-import Freckle.TraceWorkflow.OpenTelemetry
-import Freckle.TraceWorkflow.WorkflowEnv
+import qualified Configuration.Dotenv                as Dotenv
+import qualified Data.List.NonEmpty                  as NE
+import qualified Data.List.NonEmpty.Extra            as NE
+import           Freckle.TraceWorkflow.GitHub        (Job (..), Run (..),
+                                                      Step (..), wasSkipped)
+import qualified Freckle.TraceWorkflow.GitHub        as GitHub
+import           Freckle.TraceWorkflow.OpenTelemetry
+import           Freckle.TraceWorkflow.WorkflowEnv
 
 main :: IO ()
 main = do
