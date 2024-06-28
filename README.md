@@ -25,6 +25,6 @@ container as well as the action itself, make use of `.env`. See `.env.example`.
 
 In order to make this work we'd need to:
 
-1. Either rewrite in TypeScript (see `pb/typescript` branch), or dockerize for
-   use as a Docker-based action
+1. Either rewrite in TypeScript (see `pb/ts` branch), or dockerize for use as a
+   Docker-based action
 2. Figure out how to best run a collector side-car on Actions and document that
