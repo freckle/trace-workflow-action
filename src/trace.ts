@@ -20,7 +20,7 @@ const resource = Resource.default().merge(
   new Resource({
     [SEMRESATTRS_SERVICE_NAME]: "todo",
     [SEMRESATTRS_SERVICE_VERSION]: "0.0.0",
-  }),
+  })
 );
 
 const provider = new WebTracerProvider({
@@ -46,7 +46,7 @@ export interface Traceable {
 export function inSpan(
   tracer: Tracer,
   traceable: Traceable,
-  fn?: () => void,
+  fn?: () => void
 ): void {
   const { name, started_at, completed_at, status } = traceable;
 
@@ -59,7 +59,7 @@ export function inSpan(
   const span = tracer.startSpan(
     name,
     { startTime: toTimeInput(started_at) },
-    ctx,
+    ctx
   );
 
   if (fn) {
