@@ -44,6 +44,6 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [attributes/tags,batch]
+      processors: [attributes/tags, batch]
       exporters: [datadog, debug]
   extensions: [health_check]
