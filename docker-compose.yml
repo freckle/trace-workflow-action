@@ -6,7 +6,6 @@ services:
       - "4318:4318"
     volumes:
       - ./otel-config.yaml:/config.yaml:ro
-      - ./file-exporter:/file-exporter:rwz
     environment:
       DD_API_KEY: $DD_API_KEY
       OTLP_ENV: $OTLP_ENV
