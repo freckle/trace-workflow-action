@@ -9,7 +9,7 @@ services:
       - ./file-exporter:/file-exporter:rwz
     environment:
       DD_API_KEY: $DD_API_KEY
-      OTLP_ENV: gha
-      OTLP_SERVICE: $GITHUB_OWNER/$GITHUB_REPO
-      OTLP_VERSION: $GITHUB_COMMIT_SHA
+      OTLP_ENV: $OTLP_ENV
+      OTLP_SERVICE: $OTLP_SERVICE
+      OTLP_VERSION: $OTLP_VERSION
     command: ["--config", "/config.yaml"]
