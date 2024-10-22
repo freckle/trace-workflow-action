@@ -24,8 +24,9 @@ jobs:
           - 'my_testing_volume:/volume-mount'
         env:
           DD_API_KEY: ${{ secrets.DATADOG_API_KEY }}
-    run:
-      - uses: .
+    steps:
+      - run: echo hello is this working now
+      # - uses: .
   # test:
   #   services:
   #     otel-collector:
