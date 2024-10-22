@@ -11,9 +11,9 @@ jobs:
     container:
       image: 'debian:bullseye'
       volumes:
-        - 'config_volume:/config_volume'
+        - 'config_volume:/config'
     steps:
-      - run: echo "testing 123 $(date)" > /config_volume/default.yaml
+      - run: echo "testing 123 $(date)" > /config/default.yaml
   test:
     runs-on: ubuntu-latest
     needs:
@@ -28,8 +28,14 @@ jobs:
           - 'config_volume:/config'
         env:
           DD_API_KEY: ${{ secrets.DATADOG_API_KEY }}
+    container:
+      image: 'debian:bullseye'
+      volumes:
+        - 'config_volume:/config'
+
     steps:
-      - run: echo hello is this working now
+      - run: ls /config
+      - run: cat /config/default.yaml
       # - uses: .
   # test:
   #   services:
