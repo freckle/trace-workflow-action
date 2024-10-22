@@ -26,8 +26,6 @@ jobs:
           DD_API_KEY: ${{ secrets.DATADOG_API_KEY }}
     run:
       - uses: .
-
-  test:
   # test:
   #   services:
   #     otel-collector:
