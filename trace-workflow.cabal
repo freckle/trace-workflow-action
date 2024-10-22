@@ -37,7 +37,6 @@ library
       aeson
     , base
     , clock
-    , dotenv
     , extra
     , hs-opentelemetry-api
     , hs-opentelemetry-sdk

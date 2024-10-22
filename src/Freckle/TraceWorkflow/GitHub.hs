@@ -90,8 +90,6 @@ getJobs token owner repo runId = do
   page <-
     github @_ @JobsPage token
       $ "/repos/"
-      <> unpack owner
-      <> "/"
       <> unpack repo
       <> "/actions/runs/"
       <> show runId
