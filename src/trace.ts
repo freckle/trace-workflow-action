@@ -5,32 +5,30 @@ import {
   context,
   SpanStatusCode,
 } from "@opentelemetry/api";
-import { Resource } from "@opentelemetry/resources";
-import {
-  SEMRESATTRS_SERVICE_NAME,
-  SEMRESATTRS_SERVICE_VERSION,
-} from "@opentelemetry/semantic-conventions";
-import { WebTracerProvider } from "@opentelemetry/sdk-trace-web";
-import {
-  BatchSpanProcessor,
-  ConsoleSpanExporter,
-} from "@opentelemetry/sdk-trace-base";
 
-const resource = Resource.default().merge(
-  new Resource({
-    [SEMRESATTRS_SERVICE_NAME]: "todo",
-    [SEMRESATTRS_SERVICE_VERSION]: "0.0.0",
+
+import { BasicTracerProvider } from '@opentelemetry/sdk-trace-base';
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { SEMRESATTRS_SERVICE_NAME, SEMRESATTRS_SERVICE_VERSION } from "@opentelemetry/semantic-conventions";
+import { Resource } from '@opentelemetry/resources';
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+
+const sdk = new NodeSDK({
+  resource: new Resource({
+    [SEMRESATTRS_SERVICE_NAME]: "github-actions",
+    [SEMRESATTRS_SERVICE_VERSION]: "1.0.0"
+  }),
+  traceExporter: new OTLPTraceExporter({
+    url: "http://localhost:4318"
   })
-);
+})
 
-const provider = new WebTracerProvider({
-  resource: resource,
-});
-const exporter = new ConsoleSpanExporter();
-const processor = new BatchSpanProcessor(exporter);
-provider.addSpanProcessor(processor);
+sdk.start();
 
-provider.register();
+// const exporterOptions = {
+//   serviceName: "my-service-name",
+//   url: "http://localhost:4318",
+//  }
 
 export function getTracer(): Tracer {
   return trace.getTracer("freckle-trace-workflow-action");
@@ -54,7 +52,7 @@ export function inSpan(
     throw new Error("TODO");
   }
 
-  //console.log(`Span: ${name}: ${started_at}`);
+  // console.log(`Span: ${name}: ${started_at}`);
   const ctx = context.active();
   const span = tracer.startSpan(
     name,

@@ -1,8 +1,11 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
+import * as dotenv from 'dotenv';
 
 import { getInputs } from "./inputs";
 import { getTracer, inSpan } from "./trace";
+
+dotenv.config();
 
 async function run() {
   try {
@@ -50,6 +53,7 @@ async function run() {
       jobs.forEach((job) => {
         inSpan(tracer, job, () => {
           (job.steps || []).forEach((step) => {
+            console.debug(step)
             inSpan(tracer, step);
           });
         });
