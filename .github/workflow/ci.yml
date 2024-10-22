@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: main
+
+jobs:
+  test-setup:
+    container:
+      image: 'debian:bullseye'
+      volumes:
+        - 'my_testing_volume:/volume-mount'
+    steps:
+      - run: echo "testing 123 $(date)" > /volume-mount/test.txt
+  test:
+    services:
+      otel-collector:
+        image: otel/opentelemetry-collector-contrib:0.97.0
+        ports:
+          - "4317:4317"
+          - "4318:4318"
+        volumes:
+          - 'my_testing_volume:/volume-mount'
+        env:
+          DD_API_KEY: ${{ secrets.DATADOG_API_KEY }}
+    run:
+      - uses: .
+
+  test:
+  # test:
+  #   services:
+  #     otel-collector:
+  #       image: otel/opentelemetry-collector-contrib:0.97.0
+  #       ports:
+  #         - "4317:4317"
+  #         - "4318:4318"
+  #       volumes:
+  #         - ./otel-config.yaml:/config.yaml
+  #         - ./file-exporter:/file-exporter
+  #       environment:
+  #         DD_API_KEY: ${{ secrets.DATADOG_API_KEY }}
+  #       command: ["--config", "/config.yaml"]
+  #   run:
+  #     - uses: .

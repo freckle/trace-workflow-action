@@ -16,15 +16,6 @@ processors:
     timeout: 10s
   attributes/tags:
     actions:
-      - key: env
-        value: $OTLP_ENV
-        action: upsert
-      - key: service
-        value: $OTLP_SERVICE
-        action: upsert
-      - key: version
-        value: $OTLP_VERSION
-        action: upsert
       - key: otlp
         value: true
         action: insert
