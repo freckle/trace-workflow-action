@@ -13,4 +13,4 @@ FROM debian:bullseye
 
 COPY --from=build /opt/trace-workflow-action/bin/trace-workflow /trace-workflow
 
-CMD ["stack", "run"]
+CMD ["/trace-workflow"]
