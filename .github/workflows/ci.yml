@@ -71,5 +71,5 @@ jobs:
           DD_API_KEY: ${{ secrets.DATADOG_API_KEY }}
 
     steps:
-      - uses: .
-      - run: sleep 10
+      - uses: actions/checkout@v4
+      - uses: ./
