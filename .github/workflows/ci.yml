@@ -53,7 +53,7 @@ jobs:
       - otel-image
     services:
       otel-collector:
-        image: "${{ env.REGISTRY }}/freckle/trace-workflow-action-otel-image:latest"
+        image: "ghcr.io/freckle/trace-workflow-action-otel-image:latest"
         ports:
           - "4317:4317"
           - "4318:4318"
