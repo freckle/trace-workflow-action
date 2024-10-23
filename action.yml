@@ -1,11 +1,6 @@
 name: 'Trace Workflow Actions'
 description: 'publishes execution traces of workflow actions.'
 inputs:
-  OTEL_EXPORTER_OTLP_ENDPOINT:
-    description: "url to find OTLP service"
-    default: "https://otel-collector"
 runs:
   using: 'docker'
   image: 'Dockerfile'
-  env:
-    OTEL_EXPORTER_OTLP_ENDPOINT: ${{ inputs.OTEL_EXPORTER_OTLP_ENDPOINT }}
