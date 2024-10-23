@@ -5,54 +5,60 @@ on:
   push:
     branches: main
 
+permissions:
+  packages: write
+  contents: read
+  attestations: write
+  id-token: write
+
+env:
+  REGISTRY: ghcr.io
+
 jobs:
-  test-setup:
+  otel-image:
     runs-on: ubuntu-latest
-    container:
-      image: 'debian:bullseye'
-      volumes:
-        - 'config_volume:/config'
     steps:
-      - run: echo "testing 123 $(date)" > /config/default.yaml
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.REGISTRY }}/freckle/trace-workflow-action-otel-image
+
+      - name: Build and push Docker image
+        id: push
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: otel-image
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
+
   test:
     runs-on: ubuntu-latest
     needs:
-      - test-setup
+      - otel-image
     services:
       otel-collector:
-        image: otel/opentelemetry-collector-contrib:0.97.0
+        image: ${{ env.REGISTRY }}/freckle/trace-workflow-action-otel-image:latest
         ports:
           - "4317:4317"
           - "4318:4318"
-        volumes:
-          - 'config_volume:/config'
         env:
           DD_API_KEY: ${{ secrets.DATADOG_API_KEY }}
-    container:
-      image: 'debian:bullseye'
-      volumes:
-        - 'config_volume:/config'
 
     steps:
-      - run: ls /config
-      - run: cat /config/default.yaml
-      # - uses: .
-  # test:
-  #   services:
-  #     otel-collector:
-  #       image: otel/opentelemetry-collector-contrib:0.97.0
-  #       ports:
-  #         - "4317:4317"
-  #         - "4318:4318"
-  #       volumes:
-  #         - ./otel-config.yaml:/config.yaml
-  #         - ./file-exporter:/file-exporter
-  #       environment:
-  #         DD_API_KEY: ${{ secrets.DATADOG_API_KEY }}
-  #       command: ["--config", "/config.yaml"]
-  #   run:
-  #     - uses: .
-
-# FROM otel/opentelemetry-collector-contrib:0.97.0
-# COPY config /config
-# CMD ["--config", "/config/default.yaml"]
+      - run: sleep 10
