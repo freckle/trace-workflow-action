@@ -16,6 +16,7 @@ env:
 
 jobs:
   setup:
+    runs-on: ubuntu-latest
     steps:
       - id: get_tag
         run: echo "tag=$TAG" >>"$GITHUB_OUTPUT"
