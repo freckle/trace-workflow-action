@@ -36,5 +36,5 @@ service:
     traces:
       receivers: [otlp]
       processors: [attributes/tags,batch]
-      exporters: [datadog, debug, file]
+      exporters: [datadog, debug]
   extensions: [health_check]
