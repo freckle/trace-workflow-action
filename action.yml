@@ -1,11 +1,22 @@
 name: 'Trace Workflow Actions'
 description: 'publishes execution traces of workflow actions.'
+inputs:
+  github-commit-sha:
+    default: ${{ env.GITHUB_SHA }}
+  github-owner:
+    default: ${{ env.GITHUB_REPOSITORY_OWNER }}
+  github-repo:
+    default: ${{ env.GITHUB_REPOSITORY }}
+  github-run-id:
+    default: ${{ env.GITHUB_RUN_ID }}
+  github-token:
+    default: ${{ env.GITHUB_TOKEN }}
 runs:
   using: 'docker'
   image: 'Dockerfile'
   env:
-    GITHUB_COMMIT_SHA: ${{ env.GITHUB_SHA }}
-    GITHUB_OWNER: ${{ env.GITHUB_REPOSITORY_OWNER }}
-    GITHUB_REPO: ${{ env.GITHUB_REPOSITORY }}
-    GITHUB_RUN_ID: ${{ env.GITHUB_RUN_ID }}
-    GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
+    GITHUB_COMMIT_SHA: ${{ inputs.github-commit-sha }}
+    GITHUB_OWNER: ${{ inputs.github-owner }}
+    GITHUB_REPO: ${{ inputs.github-repo }}
+    GITHUB_RUN_ID: ${{ inputs.github-run-id }}
+    GITHUB_TOKEN: ${{ inputs.github-token }}
