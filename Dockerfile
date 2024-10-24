@@ -13,4 +13,4 @@ FROM debian:bullseye
 
 COPY --from=build /opt/trace-workflow-action/bin/trace-workflow /trace-workflow
 
-CMD ["/trace-workflow"]
+ENTRYPOINT ["sh", "-c", "env; /trace-workflow"]
