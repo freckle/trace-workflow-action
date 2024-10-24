@@ -3,3 +3,9 @@ description: 'publishes execution traces of workflow actions.'
 runs:
   using: 'docker'
   image: 'Dockerfile'
+  env:
+    GITHUB_COMMIT_SHA: ${{ env.GITHUB_SHA }}
+    GITHUB_OWNER: ${{ env.GITHUB_REPOSITORY_OWNER }}
+    GITHUB_REPO: ${{ env.GITHUB_REPOSITORY }}
+    GITHUB_RUN_ID: ${{ env.GITHUB_RUN_ID }}
+    GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
