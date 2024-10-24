@@ -37,7 +37,6 @@ library:
   dependencies:
     - aeson
     - clock
-    - dotenv
     - extra
     - hs-opentelemetry-api
     - hs-opentelemetry-sdk

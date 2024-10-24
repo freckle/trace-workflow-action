@@ -7,7 +7,6 @@ module Freckle.TraceWorkflow.App
 
 import Relude
 
-import Configuration.Dotenv qualified as Dotenv
 import Freckle.TraceWorkflow.GitHub (RunWithJobs (..))
 import Freckle.TraceWorkflow.GitHub qualified as GitHub
 import Freckle.TraceWorkflow.OpenTelemetry
@@ -16,7 +15,6 @@ import UnliftIO (MonadUnliftIO)
 
 main :: IO ()
 main = do
-  Dotenv.loadFile Dotenv.defaultConfig
   env <- getWorkflowEnv
   mRun <-
     GitHub.getRunWithJobs
