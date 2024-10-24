@@ -11,6 +11,11 @@ RUN mkdir bin && stack --local-bin-path ./bin build --copy-bins
 
 FROM debian:bullseye
 
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
 COPY --from=build /opt/trace-workflow-action/bin/trace-workflow /trace-workflow
 
-ENTRYPOINT ["sh", "-c", "env; /trace-workflow"]
+ENTRYPOINT ["/trace-workflow"]
