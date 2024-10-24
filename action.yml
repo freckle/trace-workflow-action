@@ -2,13 +2,13 @@ name: 'Trace Workflow Actions'
 description: 'publishes execution traces of workflow actions.'
 inputs:
   github-commit-sha:
-    default: "${{ env.GITHUB_SHA }}"
+    default: "${{ github.sha }}"
   github-owner:
-    default: "${{ env.GITHUB_REPOSITORY_OWNER }}"
+    default: "${{ github.repository_owner }}"
   github-repo:
-    default: "${{ env.GITHUB_REPOSITORY }}"
+    default: "${{ github.repository }}"
   github-run-id:
-    default: "${{ env.GITHUB_RUN_ID }}"
+    default: "${{ github.run_id }}"
   github-token:
     default: "${{ github.token }}"
 runs:
