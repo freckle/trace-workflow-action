@@ -1,0 +1,32 @@
+name: Emit Workflow Traces
+
+on:
+  workflow_run:
+    workflows:
+      - "**"
+    types:
+      - completed
+
+permissions:
+  packages: write
+  contents: write
+  attestations: write
+  id-token: write
+  actions: write
+  checks: write
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    services:
+      otel-collector:
+        image: "ghcr.io/freckle/trace-workflow-action-otel-image:7aa520d43a29e6d028037bdeafe9e9882e695795"
+        ports:
+          - "4317:4317"
+          - "4318:4318"
+        env:
+          DD_API_KEY: ${{ secrets.DATADOG_API_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./

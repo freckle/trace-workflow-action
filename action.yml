@@ -1,0 +1,22 @@
+name: 'Trace Workflow Actions'
+description: 'publishes execution traces of workflow actions.'
+inputs:
+  github-commit-sha:
+    default: "${{ github.event.pull_request.head.sha || github.sha }}"
+  github-owner:
+    default: "${{ github.repository_owner }}"
+  github-repo:
+    default: "${{ github.repository }}"
+  github-run-id:
+    default: "${{ github.run_id }}"
+  github-token:
+    default: "${{ github.token }}"
+runs:
+  using: 'docker'
+  image: "ghcr.io/freckle/trace-workflow-action-image:810e79fdfe2df6e8eca521394e27cea195ecf7d5"
+  env:
+    GITHUB_COMMIT_SHA: ${{ inputs.github-commit-sha }}
+    GITHUB_OWNER: ${{ inputs.github-owner }}
+    GITHUB_REPO: ${{ inputs.github-repo }}
+    GITHUB_RUN_ID: ${{ inputs.github-run-id }}
+    GITHUB_TOKEN: ${{ inputs.github-token }}
