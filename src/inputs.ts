@@ -5,6 +5,7 @@ export type Inputs = {
   githubOwner: string;
   githubRepo: string;
   githubRunId: number;
+  exporters: string[];
 };
 
 function getInput(envVarName: string, inputName: string) {
@@ -19,6 +20,7 @@ export function getInputs(): Inputs {
     githubOwner: getInput("GITHUB_OWNER", "github-owner"),
     githubRepo: getInput("GITHUB_REPO", "github-repo"),
     githubRunId: parseInt(rawRunId, 10),
+    exporters: (getInput("OTEL_EXPORTERS", "otel-exporters") ?? 'collector').split(',') ,
   };
 }
 

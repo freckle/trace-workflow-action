@@ -6,31 +6,10 @@ import {
   SpanStatusCode,
 } from "@opentelemetry/api";
 
-import { BasicTracerProvider } from "@opentelemetry/sdk-trace-base";
-import { NodeSDK } from "@opentelemetry/sdk-node";
-import {
-  SEMRESATTRS_SERVICE_NAME,
-  SEMRESATTRS_SERVICE_VERSION,
-} from "@opentelemetry/semantic-conventions";
-import { Resource } from "@opentelemetry/resources";
-import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
-
-const sdk = new NodeSDK({
-  resource: new Resource({
-    [SEMRESATTRS_SERVICE_NAME]: "github-actions",
-    [SEMRESATTRS_SERVICE_VERSION]: "1.0.0"
-  }),
-  traceExporter: new OTLPTraceExporter({
-    url: "http://localhost:4318",
-  }),
-});
-
-sdk.start();
-
-// const exporterOptions = {
-//   serviceName: "my-service-name",
-//   url: "http://localhost:4318",
-//  }
+export type tag = {
+  key: string,
+  value: string
+}
 
 export function getTracer(): Tracer {
   return trace.getTracer("freckle-trace-workflow-action");
@@ -46,6 +25,7 @@ export interface Traceable {
 export function inSpan(
   tracer: Tracer,
   traceable: Traceable,
+  tags?: tag[],
   fn?: () => void
 ): void {
   const { name, started_at, completed_at, conclusion } = traceable;
@@ -69,6 +49,9 @@ export function inSpan(
     name,
     { startTime: toTimeInput(started_at) },
     (span) => {
+      for (const tag of tags || []) {
+        span.setAttribute(tag.key, tag.value);
+      }
       if (fn) {
         fn();
       }
