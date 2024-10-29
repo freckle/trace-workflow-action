@@ -1,0 +1,11 @@
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  do-test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "this is a test to trigger the other workflow to run"
