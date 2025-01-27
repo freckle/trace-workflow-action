@@ -8,7 +8,7 @@ inputs:
   github-repo:
     default: "${{ github.repository }}"
   github-run-id:
-    default: "${{ github.action.workflow_run.id }}"
+    default: "${{ github.event.workflow_run.id }}"
   github-token:
     default: "${{ github.token }}"
 runs:
