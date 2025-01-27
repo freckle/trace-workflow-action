@@ -13,7 +13,7 @@ inputs:
     default: "${{ github.token }}"
 runs:
   using: 'docker'
-  image: "docker://ghcr.io/freckle/trace-workflow-action-image:810e79fdfe2df6e8eca521394e27cea195ecf7d5"
+  image: "docker://ghcr.io/freckle/trace-workflow-action-image:43355e9beffbab8294afac35d8c58a9ca1e89658"
   env:
     GITHUB_COMMIT_SHA: ${{ inputs.github-commit-sha }}
     GITHUB_OWNER: ${{ inputs.github-owner }}
