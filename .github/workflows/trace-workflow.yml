@@ -37,5 +37,5 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       # - run: docker logout ghcr.io
-      - run: docker pull ghcr.io/freckle/trace-workflow-action-image:810e79fdfe2df6e8eca521394e27cea195ecf7d5
+      - run: docker pull ghcr.io/freckle/trace-workflow-action-image:43355e9beffbab8294afac35d8c58a9ca1e89658
       - uses: ./
