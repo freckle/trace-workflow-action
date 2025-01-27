@@ -3,9 +3,8 @@ name: Emit Workflow Traces
 on:
   workflow_run:
     workflows:
-      - "**"
-      - '!*trace-workflow.yml'
-
+      - CI
+      - test
     types:
       - completed
 
