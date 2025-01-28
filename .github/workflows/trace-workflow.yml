@@ -39,3 +39,5 @@ jobs:
       # - run: docker logout ghcr.io
       - run: docker pull ghcr.io/freckle/trace-workflow-action-image:43355e9beffbab8294afac35d8c58a9ca1e89658
       - uses: ./
+        with:
+          github-run-id2: ${{ github.event.workflow_run.id }}

@@ -7,7 +7,7 @@ inputs:
     default: "${{ github.repository_owner }}"
   github-repo:
     default: "${{ github.repository }}"
-  github-run-id:
+  github-run-id2:
     default: "${{ github.event.workflow_run.id }}"
   github-token:
     default: "${{ github.token }}"
@@ -18,5 +18,5 @@ runs:
     GITHUB_COMMIT_SHA: ${{ inputs.github-commit-sha }}
     GITHUB_OWNER: ${{ inputs.github-owner }}
     GITHUB_REPO: ${{ inputs.github-repo }}
-    GITHUB_RUN_ID: ${{ inputs.github-run-id }}
+    GITHUB_RUN_ID: ${{ inputs.github-run-id2 }}
     GITHUB_TOKEN: ${{ inputs.github-token }}
