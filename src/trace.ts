@@ -45,7 +45,7 @@ export function inSpan(
   }
 
   // console.log(`Span: ${name}: ${started_at}`);
-  const span = tracer.startActiveSpan(
+  tracer.startActiveSpan(
     name,
     { startTime: toTimeInput(started_at) },
     (span) => {
@@ -62,7 +62,6 @@ export function inSpan(
           message: "Operation failed",
         });
       }
-
       span.end(toTimeInput(completed_at));
     }
   );

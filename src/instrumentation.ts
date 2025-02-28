@@ -23,15 +23,19 @@ export function init(exporters: string[]) {
     const exporter = new JaegerExporter({
       endpoint: 'http://localhost:14268/api/traces'
     });
+    console.debug('adding exporter to jaeger')
     provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
   }
 
-  if (exporters.includes('jaeger')) {
+  if (exporters.includes('console')) {
+    console.debug('adding exporter to console')
     provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
   }
 
   if (exporters.includes('collector')) {
-    provider.addSpanProcessor(new BatchSpanProcessor(new OTLPTraceExporter()));
+    console.debug('adding exporter to otel collector')
+    provider.addSpanProcessor(new SimpleSpanProcessor(new OTLPTraceExporter({
+    })));
   }
 
   provider.register();
