@@ -9,7 +9,7 @@ COPY src ./src
 
 RUN mkdir bin && stack --local-bin-path ./bin build --copy-bins
 
-FROM debian:bookworm
+FROM debian:trixie
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
