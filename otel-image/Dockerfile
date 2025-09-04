@@ -1,3 +1,3 @@
-FROM otel/opentelemetry-collector-contrib:0.133.0
+FROM otel/opentelemetry-collector-contrib:0.134.1
 COPY config.yml /config.yml
 CMD ["--config", "/config.yml"]
