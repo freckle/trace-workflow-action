@@ -1,0 +1,24 @@
+name: Trace Workflow
+description: Trace a GitHub Workflow and emit trace data to a supported OpenTelemetry exporter
+
+inputs:
+  # github-token:
+  #   description: The GitHub token to use to authenticate with the GitHub API
+  #   required: true
+  github-owner:
+    description: The GitHub owner of the repository
+    required: true
+  github-repo:
+    description: The GitHub repository name
+    required: true
+  github-run-id:
+    description: The GitHub run ID
+    required: true
+  otel-exporters:
+    description: The OpenTelemetry exporters to use
+    required: false
+    default: collector
+
+runs:
+  using: 'node24'
+  main: dist/index.js
