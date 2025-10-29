@@ -7,7 +7,7 @@ import { JaegerExporter } from "@opentelemetry/exporter-jaeger";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 
-export function init(exporters: string[]) {
+export function init(exporters: string[]): BasicTracerProvider {
   const provider = new BasicTracerProvider({
     resource: new Resource({
       [SEMRESATTRS_SERVICE_NAME]: 'github-actions'
@@ -24,19 +24,20 @@ export function init(exporters: string[]) {
       endpoint: 'http://localhost:14268/api/traces'
     });
     console.debug('adding exporter to jaeger')
-    provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
+    provider.addSpanProcessor(new BatchSpanProcessor(exporter));
   }
 
   if (exporters.includes('console')) {
     console.debug('adding exporter to console')
-    provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
+    provider.addSpanProcessor(new BatchSpanProcessor(new ConsoleSpanExporter()));
   }
 
   if (exporters.includes('collector')) {
     console.debug('adding exporter to otel collector')
-    provider.addSpanProcessor(new SimpleSpanProcessor(new OTLPTraceExporter({
+    provider.addSpanProcessor(new BatchSpanProcessor(new OTLPTraceExporter({
     })));
   }
 
   provider.register();
+  return provider;
 }

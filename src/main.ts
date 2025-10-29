@@ -1,73 +1,98 @@
 import * as core from "@actions/core";
-import * as github from "@actions/github";
 import * as dotenv from 'dotenv';
-
+import * as fs from 'fs';
+import * as github from "@actions/github";
 import * as instrumentation from './instrumentation';
+
 import { getInputs } from "./inputs";
 import { getTracer, inSpan, type tag } from "./trace";
 import { GitHub } from "@actions/github/lib/utils";
 import { readLines } from "./streaming";
-import { init } from './instrumentation'
 
 dotenv.config();
 
 const { githubToken, githubOwner, githubRepo, githubRunId, exporters } = getInputs();
 const oktokit = github.getOctokit(githubToken);
 
-instrumentation.init(exporters);
+const provider = instrumentation.init(exporters);
+
+async function fetchRunData(oktokit: InstanceType<typeof GitHub>) {
+  const { data: run } = await oktokit.rest.actions.getWorkflowRun({
+    owner: githubOwner,
+    repo: githubRepo,
+    run_id: githubRunId,
+  });
+
+  const {
+    data: { jobs, total_count },
+  } = await oktokit.rest.actions.listJobsForWorkflowRun({
+    owner: githubOwner,
+    repo: githubRepo,
+    run_id: githubRunId,
+    attempt_number: run.run_attempt,
+    per_page: 100, // we always expect fewer
+  });
+
+  if (jobs.length === 0) {
+    throw new Error("Run has no Jobs");
+  }
+
+  if (total_count > 100) {
+    throw new Error("Run had more than 100 Jobs");
+  }
+
+  return { run, jobs };
+}
+
+async function fetchJobTags(jobs: any[], needJobLogs: Map<string, tagBuilder>) {
+  const jobTags: Record<string, tag[]> = {};
+
+  // some jobs can be tagged with extra metadata
+  // for these jobs, we need to pull the job logs and parse them
+  await Promise.all(jobs.map(async (job) => {
+    const tagBuilder = needJobLogs.get(job.name);
+    if (tagBuilder != null) {
+      const tags = await generateTags(oktokit, job.id, tagBuilder);
+      console.debug(`settings tags for ${job.name}`);
+      // Set the extra tags to be attached to the span for a given job
+      jobTags[job.name] = tags;
+    }}
+  ));
+
+  return jobTags;
+}
 
 async function run() {
   try {
-    const jobTags: Record<string, tag[]> = {};
-
     // GHA jobs which we want to tag with extra metadata
-    const needJobLogs = new Map<string, tagBuilder> ([
-      [ "jenkins-ephemeral", getDeployEnvironmentTags ],
-      [ "ephemeral-staging", getDeployEnvironmentTags ], // backwards compatible with old job name
-      [ "deploy-staging", getDeployEnvironmentTags]
-    ])
+    const needJobLogs = new Map<string, tagBuilder>([
+      ["jenkins-ephemeral", getDeployEnvironmentTags],
+      ["ephemeral-staging", getDeployEnvironmentTags], // backwards compatible with old job name
+      ["deploy-staging", getDeployEnvironmentTags],
+      ["staging-deploy", getDeployEnvironmentTags]
+    ]);
 
-    const { data: run } = await oktokit.rest.actions.getWorkflowRun({
-      owner: githubOwner,
-      repo: githubRepo,
-      run_id: githubRunId,
-    });
+    const { run, jobs } = await fetchRunData(oktokit);
+    const jobTags = await fetchJobTags(jobs, needJobLogs);
 
-    const {
-      data: { jobs, total_count },
-    } = await oktokit.rest.actions.listJobsForWorkflowRun({
-      owner: githubOwner,
-      repo: githubRepo,
-      run_id: githubRunId,
-      attempt_number: run.run_attempt,
-      per_page: 100, // we always expect fewer
-    });
+     // TODO: read the run and jobs from a file for debugging
+    // const runData = JSON.parse(fs.readFileSync('run.json', 'utf8'));
+    // const { run, any: jobs, jobTags } = runData;
 
-    if (jobs.length === 0) {
-      throw new Error("Run has no Jobs");
-    }
 
-    if (total_count > 100) {
-      throw new Error("Run had more than 100 Jobs");
-    }
-
-    // some jobs can be tagged with extra metadata
-    // for these jobs, we need to pull the job logs and parse them
-    await Promise.all(jobs.map(async (job) => {
-      const tagBuilder = needJobLogs.get(job.name);
-      if (tagBuilder != null) {
-        const tags = await generateTags(oktokit, job.id, tagBuilder);
-        console.debug(`settings tags for ${job.name}`);
-        // Set the extra tags to be attached to the span for a given job
-        jobTags[job.name] = tags;
-      }}
-    ));
+    // TODO: dump the run and jobs to a file for debugging
+    const runData = {
+      run,
+      jobs,
+      jobTags,
+    };
+    fs.writeFileSync('run.json', JSON.stringify(runData, null, 2));
 
     const traceableRun = {
       name: run.run_attempt ? `${run.name} #${run.run_attempt}` : run.name,
       started_at: run.run_started_at,
       completed_at: jobs
-        .map((job) => job.completed_at)
+        .map((job: any) => job.completed_at)
         .sort()
         .reverse()[1],
       status: run.status,
@@ -76,15 +101,15 @@ async function run() {
 
     const tracer = getTracer();
 
-    inSpan(tracer, traceableRun, undefined, () => {
-      jobs.forEach((job) => {
-        inSpan(tracer, job, jobTags[job.name], () => {
-          (job.steps || []).forEach((step) => {
-            inSpan(tracer, step);
-          });
-        });
+    const workflowSpan = inSpan(tracer, traceableRun);
+
+    jobs.forEach((job: any) => {
+      const jobSpan = inSpan(tracer, job, jobTags[job.name], workflowSpan);
+      (job.steps || []).forEach((step: any) => {
+        inSpan(tracer, step, undefined, jobSpan);
       });
     });
+
   } catch (error) {
     if (error instanceof Error) {
       core.error(error);
@@ -96,6 +121,14 @@ async function run() {
       core.error("Non-Error exception");
       core.setFailed("Non-Error exception");
     }
+  }
+
+  try {
+    await provider.forceFlush();
+    await provider.shutdown();
+    console.debug('shutdown complete');
+  } catch (error) {
+    console.error('error shutting down provider', error);
   }
 }
 
@@ -146,16 +179,16 @@ async function getDeployEnvironmentTags(response: Response): Promise<tag[]> {
   // Verifying s3://frontrow-artifacts/classroom/869211fa8d815222eb36317f36016ff3618b3423
   // ✓ bundle found
   if (response.body != null) {
+    const regex = /✓ ([^:]+): deploy: artifact is newer than deployed/;
     for await (const line of readLines(response.body.getReader())) {
-      if (line.match(/✓ \w+ found/)) {
-        const artifact = getArtifactName(prev);
+      const match = regex.exec(line);
+      if (match != null) {
+        const artifact = match[1];
         console.debug(`artifact name is ${artifact} for log ${prev}`)
-        if (artifact != null) {
-          tags.push({
-            key: `deploy.${artifact}`,
-            value: "true"
-          })
-        }
+        tags.push({
+          key: `deploy.${artifact}`,
+          value: "true"
+        })
       }
       prev = line;
     }

@@ -4,6 +4,7 @@ import {
   trace,
   context,
   SpanStatusCode,
+  Span,
 } from "@opentelemetry/api";
 
 export type tag = {
@@ -26,8 +27,8 @@ export function inSpan(
   tracer: Tracer,
   traceable: Traceable,
   tags?: tag[],
-  fn?: () => void
-): void {
+  parentSpan?: Span
+): Span | undefined {
   const { name, started_at, completed_at, conclusion } = traceable;
 
   if (!name) {
@@ -44,27 +45,41 @@ export function inSpan(
     return;
   }
 
-  // console.log(`Span: ${name}: ${started_at}`);
-  tracer.startActiveSpan(
+  let ctx;
+  if (parentSpan != null) {
+    console.debug(`setting span ${parentSpan.spanContext().spanId} as parent for ${name}`);
+    ctx = trace.setSpan(
+      context.active(),
+      parentSpan,
+    );
+  }
+
+  // console.debug(`Begin span: ${name}: ${started_at}`);
+  const span = tracer.startSpan(
     name,
     { startTime: toTimeInput(started_at) },
-    (span) => {
-      for (const tag of tags || []) {
-        span.setAttribute(tag.key, tag.value);
-      }
-      if (fn) {
-        fn();
-      }
-
-      if (conclusion === "failure") {
-        span.setStatus({
-          code: SpanStatusCode.ERROR,
-          message: "Operation failed",
-        });
-      }
-      span.end(toTimeInput(completed_at));
-    }
+    ctx
   );
+
+  for (const tag of tags || []) {
+    span.setAttribute(tag.key, tag.value);
+  }
+
+  if (conclusion === "failure") {
+    span.setStatus({
+      code: SpanStatusCode.ERROR,
+      message: "Operation failed",
+    });
+  }
+  else {
+    span.setStatus({
+      code: SpanStatusCode.OK,
+      message: "Operation succeeded",
+    });
+  }
+  span.end(toTimeInput(completed_at));
+
+  return span;
 }
 
 function toTimeInput(t: string | null | undefined): TimeInput {
