@@ -18,6 +18,9 @@ inputs:
     description: The OpenTelemetry exporters to use
     required: false
     default: collector
+  workflow-run-id:
+    description: The GitHub workflow run ID
+    required: true
 
 runs:
   using: 'node24'
