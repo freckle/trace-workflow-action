@@ -5,15 +5,14 @@ inputs:
   # github-token:
   #   description: The GitHub token to use to authenticate with the GitHub API
   #   required: true
-  github-owner:
-    description: The GitHub owner of the repository
-    required: true
-  github-repo:
+  github-repository:
     description: The GitHub repository name
-    required: true
+    required: false
+    default: ${{ github.repository }}
   github-run-id:
     description: The GitHub run ID
-    required: true
+    required: false
+    default: ${{ github.run_id }}
   otel-exporters:
     description: The OpenTelemetry exporters to use
     required: false

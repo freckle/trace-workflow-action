@@ -11,7 +11,8 @@ import { readLines } from "./streaming";
 
 dotenv.config();
 
-const { githubToken, githubOwner, githubRepo, githubRunId, exporters } = getInputs();
+const { githubToken, githubRepository, githubRunId, exporters } = getInputs();
+const [ githubOwner, githubRepo ] = githubRepository.split('/');
 const oktokit = github.getOctokit(githubToken);
 
 const provider = instrumentation.init(exporters);

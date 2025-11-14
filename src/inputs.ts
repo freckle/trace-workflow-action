@@ -2,8 +2,7 @@ import * as core from "@actions/core";
 
 export type Inputs = {
   githubToken: string;
-  githubOwner: string;
-  githubRepo: string;
+  githubRepository: string;
   githubRunId: number;
   exporters: string[];
 };
@@ -17,8 +16,7 @@ export function getInputs(): Inputs {
 
   return {
     githubToken: getInput("GITHUB_TOKEN", "github-token"),
-    githubOwner: getInput("GITHUB_OWNER", "github-owner"),
-    githubRepo: getInput("GITHUB_REPO", "github-repo"),
+    githubRepository: getInput("GITHUB_REPOSITORY", "github-repository"),
     githubRunId: parseInt(rawRunId, 10),
     exporters: (getInput("OTEL_EXPORTERS", "otel-exporters") ?? 'collector').split(',') ,
   };

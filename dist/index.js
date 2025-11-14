@@ -39,8 +39,7 @@ function getInputs() {
     const rawRunId = getInput("GITHUB_RUN_ID", "github-run-id");
     return {
         githubToken: getInput("GITHUB_TOKEN", "github-token"),
-        githubOwner: getInput("GITHUB_OWNER", "github-owner"),
-        githubRepo: getInput("GITHUB_REPO", "github-repo"),
+        githubRepository: getInput("GITHUB_REPOSITORY", "github-repository"),
         githubRunId: parseInt(rawRunId, 10),
         exporters: (getInput("OTEL_EXPORTERS", "otel-exporters") ?? 'collector').split(','),
     };
@@ -149,7 +148,8 @@ const inputs_1 = __nccwpck_require__(36180);
 const trace_1 = __nccwpck_require__(8514);
 const streaming_1 = __nccwpck_require__(27606);
 dotenv.config();
-const { githubToken, githubOwner, githubRepo, githubRunId, exporters } = (0, inputs_1.getInputs)();
+const { githubToken, githubRepository, githubRunId, exporters } = (0, inputs_1.getInputs)();
+const [githubOwner, githubRepo] = githubRepository.split('/');
 const oktokit = github.getOctokit(githubToken);
 const provider = instrumentation.init(exporters);
 async function fetchRunData(oktokit) {
