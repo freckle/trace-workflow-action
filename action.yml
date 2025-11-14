@@ -21,6 +21,10 @@ inputs:
   workflow-run-id:
     description: The GitHub workflow run ID
     required: true
+  github-token:
+    description: The GitHub token to use to authenticate with the GitHub API
+    required: false
+    default: ${{ github.token }}
 
 runs:
   using: 'node24'
