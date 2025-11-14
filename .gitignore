@@ -7,3 +7,6 @@ file-exporter
 # if/when we do typescript
 lib
 node_modules
+
+# for debugging
+run.json
