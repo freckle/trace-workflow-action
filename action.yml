@@ -11,8 +11,7 @@ inputs:
     default: ${{ github.repository }}
   github-run-id:
     description: The GitHub run ID
-    required: false
-    default: ${{ github.run_id }}
+    required: true
   otel-exporters:
     description: The OpenTelemetry exporters to use
     required: false
