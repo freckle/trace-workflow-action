@@ -141,7 +141,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(42186));
 const dotenv = __importStar(__nccwpck_require__(12437));
-const fs = __importStar(__nccwpck_require__(57147));
 const github = __importStar(__nccwpck_require__(95438));
 const instrumentation = __importStar(__nccwpck_require__(83814));
 const inputs_1 = __nccwpck_require__(36180);
@@ -153,6 +152,7 @@ const [githubOwner, githubRepo] = githubRepository.split('/');
 const oktokit = github.getOctokit(githubToken);
 const provider = instrumentation.init(exporters);
 async function fetchRunData(oktokit) {
+    console.debug(`fetching run data for run ${githubRunId}`);
     const { data: run } = await oktokit.rest.actions.getWorkflowRun({
         owner: githubOwner,
         repo: githubRepo,
@@ -195,12 +195,6 @@ async function run() {
         ]);
         const { run, jobs } = await fetchRunData(oktokit);
         const jobTags = await fetchJobTags(jobs, needJobLogs);
-        const runData = {
-            run,
-            jobs,
-            jobTags,
-        };
-        fs.writeFileSync('run.json', JSON.stringify(runData, null, 2));
         const traceableRun = {
             name: run.run_attempt ? `${run.name} #${run.run_attempt}` : run.name,
             started_at: run.run_started_at,

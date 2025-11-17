@@ -18,6 +18,7 @@ const oktokit = github.getOctokit(githubToken);
 const provider = instrumentation.init(exporters);
 
 async function fetchRunData(oktokit: InstanceType<typeof GitHub>) {
+  console.debug(`fetching run data for run ${githubRunId}`);
   const { data: run } = await oktokit.rest.actions.getWorkflowRun({
     owner: githubOwner,
     repo: githubRepo,
@@ -82,12 +83,12 @@ async function run() {
 
 
     // TODO: dump the run and jobs to a file for debugging
-    const runData = {
-      run,
-      jobs,
-      jobTags,
-    };
-    fs.writeFileSync('run.json', JSON.stringify(runData, null, 2));
+    // const runData = {
+    //   run,
+    //   jobs,
+    //   jobTags,
+    // };
+    // fs.writeFileSync('run.json', JSON.stringify(runData, null, 2));
 
     const traceableRun = {
       name: run.run_attempt ? `${run.name} #${run.run_attempt}` : run.name,
