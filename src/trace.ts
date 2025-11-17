@@ -32,7 +32,13 @@ export function inSpan(
   const { name, started_at, completed_at, conclusion } = traceable;
 
   if (!name) {
-    throw new Error("TODO");
+    console.debug("span has no name, skipping");
+    return;
+  }
+
+  if (!completed_at) {
+    console.debug("span has no completed_at, skipping");
+    return;
   }
 
   // don't create spans for skipped steps
