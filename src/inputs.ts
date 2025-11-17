@@ -12,7 +12,9 @@ function getInput(envVarName: string, inputName: string) {
 }
 
 export function getInputs(): Inputs {
-  const rawRunId = getInput("GITHUB_RUN_ID", "github-run-id");
+  // cannot use GITHUB_RUN_ID as an override because it's always set to the current run ID,
+  // which is usually not what we want.
+  const rawRunId = getInput("WORKFLOW_RUN_ID", "github-run-id");
 
   return {
     githubToken: getInput("GITHUB_TOKEN", "github-token"),

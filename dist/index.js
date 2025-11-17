@@ -36,7 +36,7 @@ function getInput(envVarName, inputName) {
     return process.env[envVarName] || core.getInput(inputName, { required: true });
 }
 function getInputs() {
-    const rawRunId = getInput("GITHUB_RUN_ID", "github-run-id");
+    const rawRunId = getInput("WORKFLOW_RUN_ID", "github-run-id");
     return {
         githubToken: getInput("GITHUB_TOKEN", "github-token"),
         githubRepository: getInput("GITHUB_REPOSITORY", "github-repository"),
