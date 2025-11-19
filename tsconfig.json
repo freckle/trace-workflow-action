@@ -15,6 +15,7 @@
     "removeComments": true,
     "module": "NodeNext",
     "esModuleInterop": true,
+    "sourceMap": true,
     "strict": true
   },
   "include": ["./src/**/*"],

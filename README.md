@@ -28,3 +28,21 @@ In order to make this work we'd need to:
 1. Either rewrite in TypeScript (see `pb/ts` branch), or dockerize for use as a
    Docker-based action
 2. Figure out how to best run a collector side-car on Actions and document that
+
+## Local testing
+
+Start jaeger
+```
+docker run --rm -d --name jaeger \
+  -e COLLECTOR_ZIPKIN_HTTP_PORT=9411 \
+  -e COLLECTOR_OTLP_ENABLED=true \
+  -p 5775:5775/udp \
+  -p 6831:6831/udp \
+  -p 6832:6832/udp \
+  -p 5778:5778 \
+  -p 16686:16686 \
+  -p 14268:14268 \
+  -p 9411:9411 \
+  -p 4318:4318 \
+  jaegertracing/all-in-one:latest
+```
