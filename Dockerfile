@@ -1,4 +1,4 @@
-FROM haskell:9.2.7 AS build
+FROM haskell:9.14.1 AS build
 
 WORKDIR /opt/trace-workflow-action
 COPY stack.yaml stack.yaml.lock package.yaml trace-workflow.cabal .
